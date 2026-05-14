@@ -1,0 +1,23 @@
+{
+  "name": "pong",
+  "version": "1.0.0",
+  "description": "Pong Browser Game",
+  "main": "index.js",
+  "scripts": {
+    "test": "test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/marcel-b-meyer1987/pong.git"
+  },
+  "keywords": [
+    "pong",
+    "game"
+  ],
+  "author": "Marcel Meyer",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/marcel-b-meyer1987/pong/issues"
+  },
+  "homepage": "https://github.com/marcel-b-meyer1987/pong#readme"
+}
