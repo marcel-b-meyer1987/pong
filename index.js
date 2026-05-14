@@ -14,7 +14,7 @@ const game = new Game(ctx, GAME_WIDTH, GAME_HEIGHT);
 // console.log(game);
 
 // console.log(game.objects.paddle);
-game.objects.paddle.draw(ctx);
+// game.objects.paddle.draw(ctx);
 
 
 // animation gameloop
@@ -33,4 +33,5 @@ function animate(timestamp = 0) {
 
 }
 
+game.start();
 animate(lastTime);
