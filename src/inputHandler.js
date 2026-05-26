@@ -18,12 +18,7 @@ export default class InputHandler {
 
     registerKey(key) {
         
-        console.log(event.key);
-        if (key === "Escape") {
-            // console.log(this.game.state);
-            this.game.togglePause();
-            
-        }
+        if (key === "Escape") this.game.togglePause();       
 
         // only register ArrowLeft or ArrowRight
         if(
@@ -32,11 +27,9 @@ export default class InputHandler {
         ) {
             this.keys[key].pressed = true;
         }
-        // console.log(this.keys);
     }
 
     deleteKey(key) {
         if(this.keys[key]) this.keys[key].pressed = false;
-        // console.log(this.keys);
     }
 }

@@ -1,34 +1,28 @@
-import { GAME_STATES } from "./constants.js";
+import { BRICK_DATA, GAME_STATES } from "./constants.js";
 import { Paddle } from "./paddle.js";
 import Ball from "./ball.js";
 import InputHandler from "./inputHandler.js";
+import { levels } from "./levels.js";
+import { Brick } from "./brick.js";
 
 export default class Game {
     constructor(ctx, width, height) {
         this.ctx = ctx;
         this.width = width;
         this.height = height;
+        this.level = 1;
         this.state = GAME_STATES.MENU;
         this.inputHandler = new InputHandler(this);
         this.objects = [
             new Paddle(this),
-            new Ball(this)
+            new Ball(this),
+            ...this.createBricks(this.level)
         ]
         console.log(this, this.objects);
     }
 
     start() {
         this.state = GAME_STATES.RUNNING;
-    }
-
-    togglePause() {
-        if (this.state === GAME_STATES.RUNNING) {
-            this.showPauseScreen();
-            this.state = GAME_STATES.PAUSE;
-         } else if (this.state === GAME_STATES.PAUSE) {
-            this.state = GAME_STATES.RUNNING;
-         } 
-        console.log(this.state);
     }
 
     update(dt) {
@@ -50,6 +44,16 @@ export default class Game {
         });
     }
 
+    togglePause() {
+        if (this.state === GAME_STATES.RUNNING) {
+            this.showPauseScreen();
+            this.state = GAME_STATES.PAUSE;
+         } else if (this.state === GAME_STATES.PAUSE) {
+            this.state = GAME_STATES.RUNNING;
+         } 
+        // console.log(this.state);
+    }
+
     showPauseScreen() {
 
         this.ctx.save();
@@ -68,6 +72,44 @@ export default class Game {
         this.ctx.restore();
 
         return;
+    }
+
+    createBricks(level) {
+
+        const map = levels[level];
+        const rows = map.length;
+        const cols = map[0].length;
+        const bricks = [];
+
+        for (let row = 0; row < rows; row++) {
+            for (let col = 0; col < cols; col++) {
+
+                // if there is a 1 at position map[row][col], 
+                // add a brick at the respective position in the canvas
+
+                if (map[row][col] === 1) {
+                    bricks.push(new Brick(
+                        col * BRICK_DATA.width,
+                        row * BRICK_DATA.height + BRICK_DATA.topMargin
+                    ));
+                }
+            }
+        }
+
+        return bricks;
+    }
+
+    levelUp() {
+        this.level++;
+
+        // filter all remaining bricks out of this.objects array
+        this.objects = this.objects.filter(obj => obj instanceof Paddle || obj instanceof Ball);
+
+        // create bricks for the new level and 
+        // push them flat into the this.objects array
+        this.objects.push(...this.createBricks(this.level));
+
+        // maybe show a short animation to give visual indication over level-up to the player
     }
     
 }
