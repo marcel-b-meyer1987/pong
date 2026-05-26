@@ -1,3 +1,5 @@
+import { GAME_STATES } from "./constants.js";
+
 export default class InputHandler {
     constructor(game) {
         this.game = game;
@@ -15,8 +17,15 @@ export default class InputHandler {
     }
 
     registerKey(key) {
+        
+        console.log(event.key);
+        if (key === "Escape") {
+            // console.log(this.game.state);
+            this.game.togglePause();
+            
+        }
+
         // only register ArrowLeft or ArrowRight
-        // console.log(event.key);
         if(
             key === "ArrowLeft" ||
             key === "ArrowRight"
@@ -27,7 +36,7 @@ export default class InputHandler {
     }
 
     deleteKey(key) {
-        this.keys[key].pressed = false;
+        if(this.keys[key]) this.keys[key].pressed = false;
         // console.log(this.keys);
     }
 }

@@ -26,8 +26,10 @@ function animate(timestamp = 0) {
     let dt = timestamp - lastTime;
     lastTime = timestamp;
 
-    game.update(dt);
-    game.draw(ctx);
+    if (game.state == GAME_STATES.RUNNING) {
+        game.update(dt);
+        game.draw();
+    }
 
     requestAnimationFrame(animate);
 

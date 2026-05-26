@@ -10,8 +10,8 @@ export default class Ball {
         this.x = 400;    // this.game.width * 0.5 - this.size * 0.5;
         this.y = 200;    // Math.round(this.game.height * 0.33); // spawn in the upper third of the game canvas
         this.speed = {
-            x: 0.15,
-            y: 0.15
+            x: 0.25,
+            y: 0.25
         }
     }
 

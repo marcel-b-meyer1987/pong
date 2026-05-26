@@ -21,13 +21,26 @@ export default class Game {
         this.state = GAME_STATES.RUNNING;
     }
 
+    togglePause() {
+        if (this.state === GAME_STATES.RUNNING) {
+            this.showPauseScreen();
+            this.state = GAME_STATES.PAUSE;
+         } else if (this.state === GAME_STATES.PAUSE) {
+            this.state = GAME_STATES.RUNNING;
+         } 
+        console.log(this.state);
+    }
+
     update(dt) {
+        if (this.state == GAME_STATES.PAUSE) return;
+
         this.objects.forEach(obj => {
             obj.update(dt);
         });
     }
 
-    draw() {
+    draw() {      
+
         // clear canvas
         this.ctx.clearRect(0,0,this.width,this.height);
         
@@ -37,5 +50,24 @@ export default class Game {
         });
     }
 
+    showPauseScreen() {
+
+        this.ctx.save();
+
+        // draw overlay if game is paused
+        this.ctx.fillStyle = "rgba(0, 0, 0, 0.5)";
+        this.ctx.fillRect(0, 0, this.width, this.height);
+
+        // display Pause message
+        this.ctx.font = "72px sans-serif";
+        this.ctx.fillStyle = "hsla(160, 100%, 60%, 0.8)";
+        this.ctx.strokeStyle = "hsla(160, 100%, 90%, 0.8)";
+        this.ctx.textAlign = "center";
+        this.ctx.fillText("PAUSE", this.width * 0.5, this.height * 0.5);
+
+        this.ctx.restore();
+
+        return;
+    }
     
 }
