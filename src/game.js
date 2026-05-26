@@ -13,9 +13,12 @@ export default class Game {
         this.level = 1;
         this.state = GAME_STATES.MENU;
         this.inputHandler = new InputHandler(this);
+
+        this.ball = new Ball(this);
+        this.paddle = new Paddle(this);
         this.objects = [
-            new Paddle(this),
-            new Ball(this),
+            this.paddle,
+            this.ball,
             ...this.createBricks(this.level)
         ]
         console.log(this, this.objects);
@@ -89,6 +92,7 @@ export default class Game {
 
                 if (map[row][col] === 1) {
                     bricks.push(new Brick(
+                        this,
                         col * BRICK_DATA.width,
                         row * BRICK_DATA.height + BRICK_DATA.topMargin
                     ));

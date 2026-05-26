@@ -1,15 +1,24 @@
-export function collision(a, b) {
-    let leftBorderA = a.x;
-    let rightBorderA = a.x + a.width;
-    let topA = a.y;
-    let bottomA = a.y + a.height;
+export function collision(circle, rect) {
 
-    let leftBorderB = b.x;
-    let rightBorderB = b.x + b.width;
-    let topB = b.y;
-    let bottomB = b.y + b.height;
+    let leftBorderCircle = circle.x - circle.size;
+    let rightBorderCircle = circle.x + circle.size;
+    let topCircle = circle.y - circle.size;
+    let bottomCircle = circle.y + circle.size;
+
+    let leftBorderRect = rect.x;
+    let rightBorderRect = rect.x + rect.width;
+    let topRect = rect.y;
+    let bottomRect = rect.y + rect.height;
 
     // conditions for collision must be added here
+    if (
+        leftBorderCircle < rightBorderRect &&
+        rightBorderCircle > leftBorderRect &&
+        topCircle < bottomRect &&
+        bottomCircle > topRect
+    ) {
+        return true;
+    }
 
     return false; // default
 }

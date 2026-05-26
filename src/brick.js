@@ -1,8 +1,9 @@
 import { BRICK_DATA } from "./constants.js";
+import { collision } from "./utils.js";
 
 export class Brick {
-    constructor(x, y) {
-        
+    constructor(game, x, y) {
+        this.game = game;
         this.fillColor = BRICK_DATA.fillColor;
         this.strokeColor = BRICK_DATA.strokeColor;
         this.width = BRICK_DATA.width;
@@ -17,7 +18,16 @@ export class Brick {
     }
 
     update(dt) {
+        if (collision(this.game.ball, this)) this.markedForRemoval = true;
         
+        // if the brick is marked for removal, 
+        // splice it from the objects array
+        if (this.markedForRemoval) {
+            let index = this.game.objects.indexOf(this);
+            if (index > -1) {
+                this.game.objects.splice(index, 1);
+            }
+        }
     }
 
 
