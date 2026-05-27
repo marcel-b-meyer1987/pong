@@ -35,5 +35,15 @@ function animate(timestamp = 0) {
 
 }
 
-game.start();
-animate(lastTime);
+function init() {
+    game.start();
+    animate(lastTime);
+}
+
+// SET UP START MENU
+window.addEventListener("keydown", e => {
+    if (e.key === " " && game.state === GAME_STATES.MENU) init();
+});
+
+game.showStartMenu();
+

@@ -1,4 +1,4 @@
-import { BRICK_DATA, GAME_STATES } from "./constants.js";
+import { BRICK_DATA, GAME_STATES, GAME_WIDTH } from "./constants.js";
 import { Paddle } from "./paddle.js";
 import Ball from "./ball.js";
 import InputHandler from "./inputHandler.js";
@@ -10,6 +10,8 @@ export default class Game {
         this.ctx = ctx;
         this.width = width;
         this.height = height;
+        this.ups = 3;
+        this.score = 0;
         this.level = 1;
         this.state = GAME_STATES.MENU;
         this.inputHandler = new InputHandler(this);
@@ -29,7 +31,7 @@ export default class Game {
     }
 
     update(dt) {
-        if (this.state == GAME_STATES.PAUSE) return;
+        if (this.state == GAME_STATES.PAUSE || this.state == GAME_STATES.MENU) return;
 
         this.objects.forEach(obj => {
             obj.update(dt);
@@ -55,6 +57,26 @@ export default class Game {
             this.state = GAME_STATES.RUNNING;
          } 
         // console.log(this.state);
+    }
+
+    showStartMenu() {
+
+        this.ctx.save();
+
+        // draw overlay if game is paused
+        this.ctx.fillStyle = "rgba(0, 0, 0, 0.5)";
+        this.ctx.fillRect(0, 0, this.width, this.height);
+
+        // display Pause message
+        this.ctx.font = "72px sans-serif";
+        this.ctx.fillStyle = "hsla(160, 100%, 60%, 0.8)";
+        this.ctx.strokeStyle = "hsla(160, 100%, 90%, 0.8)";
+        this.ctx.textAlign = "center";
+        this.ctx.fillText("PRESS SPACE TO START", this.width * 0.5, this.height * 0.5, GAME_WIDTH * 0.85);
+
+        this.ctx.restore();
+
+        return;
     }
 
     showPauseScreen() {
