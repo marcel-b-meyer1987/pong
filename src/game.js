@@ -128,7 +128,7 @@ export default class Game {
     }
 
     reduceUps() {
-        if (this.ups - 1 <= 0) {
+        if (this.ups - 1 < 1) {
             this.ups--;
             this.hud.updateUpsDisplay();
             this.gameOver();
@@ -144,7 +144,7 @@ export default class Game {
     }
 
     showGameOverScreen() {
-
+        console.log("showGameOverScreen()");
         this.ctx.save();
 
         // draw overlay
