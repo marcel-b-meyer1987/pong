@@ -2,6 +2,7 @@ import { BRICK_DATA, GAME_STATES, GAME_WIDTH } from "./constants.js";
 import { Paddle } from "./paddle.js";
 import Ball from "./ball.js";
 import InputHandler from "./inputHandler.js";
+import { Hud } from "./hud.js";
 import { levels } from "./levels.js";
 import { Brick } from "./brick.js";
 
@@ -15,7 +16,7 @@ export default class Game {
         this.level = 1;
         this.state = GAME_STATES.MENU;
         this.inputHandler = new InputHandler(this);
-
+        this.hud = new Hud(this);
         this.ball = new Ball(this);
         this.paddle = new Paddle(this);
         this.objects = [
@@ -28,10 +29,11 @@ export default class Game {
 
     start() {
         this.state = GAME_STATES.RUNNING;
+        this.hud.init();
     }
 
     update(dt) {
-        if (this.state == GAME_STATES.PAUSE || this.state == GAME_STATES.MENU) return;
+        if (this.state == GAME_STATES.PAUSE || this.state == GAME_STATES.MENU || this.state == GAME_STATES.GAME_OVER) return;
 
         this.objects.forEach(obj => {
             obj.update(dt);
@@ -123,6 +125,42 @@ export default class Game {
         }
 
         return bricks;
+    }
+
+    reduceUps() {
+        if (this.ups - 1 <= 0) {
+            this.ups--;
+            this.hud.updateUpsDisplay();
+            this.gameOver();
+        } else {
+            this.ups--;
+            this.hud.updateUpsDisplay();
+        }
+    }
+
+    gameOver() {
+        this.state = GAME_STATES.GAME_OVER;
+        this.showGameOverScreen();
+    }
+
+    showGameOverScreen() {
+
+        this.ctx.save();
+
+        // draw overlay
+        this.ctx.fillStyle = "rgba(0, 0, 0, 0.5)";
+        this.ctx.fillRect(0, 0, this.width, this.height);
+
+        // display Game Over message
+        this.ctx.font = "72px sans-serif";
+        this.ctx.fillStyle = "hsla(160, 100%, 60%, 0.8)";
+        this.ctx.strokeStyle = "hsla(160, 100%, 90%, 0.8)";
+        this.ctx.textAlign = "center";
+        this.ctx.fillText("GAME OVER", this.width * 0.5, this.height * 0.5);
+
+        this.ctx.restore();
+
+        return;
     }
 
     levelUp() {

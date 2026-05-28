@@ -8,11 +8,11 @@ export default class Ball {
         this.width = 24;    // only needed due to the function signature of collision detection
         this.height = 24;   // only needed due to the function signature of collision detection
         this.color = "rgba(239, 26, 93, 0.91)";
-        this.x = 400;    // this.game.width * 0.5 - this.size * 0.5;
-        this.y = 200;    // Math.round(this.game.height * 0.33); // spawn in the upper third of the game canvas
+        this.x = this.game.width * 0.5 - this.size; 
+        this.y = 100; //Math.floor(this.game.height * 0.3);
         this.speed = {
-            x: 0.25,
-            y: 0.25
+            x: 0.15,
+            y: 0.15
         }
     }
 
@@ -35,8 +35,7 @@ export default class Ball {
         if (this.y + this.size >= this.game.height) {
             this.y = this.game.height - this.size;
             this.speed.y *= -1;
-            console.log("hit ground = ups--");
-            this.game.ups--;
+            this.game.reduceUps();
         }
 
         // check for collision with ceiling
