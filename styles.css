@@ -10,6 +10,15 @@ body {
     background-color: darkgrey;
 }
 
+#hud {
+    position: absolute;
+    z-index: 1;
+    top: 0;
+    left: 0;
+    /* inset: 0; */
+    background-color: rgba(200,0,0,0.1);
+}
+
 canvas {
     background-color: rgba(0,0,0,0.9);
 }

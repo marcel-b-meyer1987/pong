@@ -1,3 +1,4 @@
+import { GAME_HEIGHT } from "./constants.js";
 
 
 export default class Ball {
@@ -34,6 +35,8 @@ export default class Ball {
         if (this.y + this.size >= this.game.height) {
             this.y = this.game.height - this.size;
             this.speed.y *= -1;
+            console.log("hit ground = ups--");
+            this.game.ups--;
         }
 
         // check for collision with ceiling
@@ -43,13 +46,21 @@ export default class Ball {
         }
 
         // check for collision with paddle
-        let paddle = this.game.objects[0];
+        let paddle = this.game.paddle;
         if (this.y + this.size >= paddle.y &&
             this.x <= paddle.x + paddle.width &&
             this.x + this.size >= paddle.x) {
                 this.y = this.game.objects[0].y - this.size;
                 this.speed.y *= -1;
         }
+
+        // // check for collision with the ground
+        // if (this.y + this.size <= GAME_HEIGHT &&
+        //     this.x < paddle.x + paddle.width &&
+        //     this.x + this.width > paddle.x) {
+        //         // bla
+        //     }
+        
     }
 
     draw(ctx) {

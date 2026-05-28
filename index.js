@@ -1,11 +1,17 @@
 import Game from "./src/game.js";
 import { GAME_WIDTH, GAME_HEIGHT, GAME_STATES } from "./src/constants.js";
 
+const hud = document.getElementById("hud");
+
 const canvas = document.getElementById("gameScreen");
 const ctx = canvas.getContext("2d");
 
 canvas.height = GAME_HEIGHT;
 canvas.width = GAME_WIDTH;
+
+hud.height = GAME_HEIGHT;
+hud.width = GAME_WIDTH;
+
 
 // ctx.fillStyle = "blue";
 // ctx.fillRect(GAME_WIDTH * 0.5 - 40, GAME_HEIGHT - 30, 80, 20);
