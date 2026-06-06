@@ -33,6 +33,11 @@ export class Hud {
             this.upsDisplay.innerHTML += upHTML;
         }
     }
+
+    updateLevelDisplay() {
+        let level = this.game.level;
+        
+    }
 }
 
 

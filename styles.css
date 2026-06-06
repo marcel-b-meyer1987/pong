@@ -40,6 +40,12 @@ body {
     padding: 6px 12px;
 }
 
+#hud > header > div {
+    width: 30%;
+    display: flex;
+    justify-content: center;
+}
+
 #score {
     display: inline-block;
     width: 6ch;
