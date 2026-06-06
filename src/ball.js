@@ -8,27 +8,31 @@ export default class Ball {
         this.width = 24;    // only needed due to the function signature of collision detection
         this.height = 24;   // only needed due to the function signature of collision detection
         this.color = "rgba(239, 26, 93, 0.91)";
-        this.x = this.game.width * 0.5 - this.size; 
-        this.y = 100; //Math.floor(this.game.height * 0.3);
+        this.x = this.game.width * 0.5; 
+        this.y = this.game.height * 0.3;
+        this.baseSpeedX = 0.15;
+        this.baseSpeedY = 0.25;
         this.speed = {
             x: 0.15,
-            y: 0.15
+            y: 0.25
         }
+        this.speedModifier = 1;
     }
 
     update(dt) {
-        this.x += this.speed.x * dt;
-        this.y += this.speed.y * dt;
+        this.x += this.speed.x * this.speedModifier * dt;
+        this.y += this.speed.y * this.speedModifier * dt;
 
         // check for collision with left & right wall
-        if (this.x - this.size <= 0) {
-            // this.x = 0;
-            this.speed.x *= -1;
+        if (this.x - this.speed.x * this.speedModifier - this.size <= 0) {
+            // this.speed.x *= -1;
+            this.speed.x = this.baseSpeedX;
         }
 
-        if (this.x + this.size >= this.game.width) {
+        if (this.x + this.speed.x * this.speedModifier + this.size >= this.game.width) {
             this.x = this.game.width - this.size;
-            this.speed.x *= -1;
+            // this.speed.x *= -1;
+            this.speed.x = -this.baseSpeedX;
         }
 
         // check for collision with bottom
@@ -41,6 +45,7 @@ export default class Ball {
         // check for collision with ceiling
         if (this.y - this.size <= 0) {
             // this.y = 0;
+            this.speedModifier += 0.1;
             this.speed.y *= -1;
         }
 
@@ -51,15 +56,8 @@ export default class Ball {
             this.x + this.size >= paddle.x) {
                 this.y = this.game.objects[0].y - this.size;
                 this.speed.y *= -1;
-        }
-
-        // // check for collision with the ground
-        // if (this.y + this.size <= GAME_HEIGHT &&
-        //     this.x < paddle.x + paddle.width &&
-        //     this.x + this.width > paddle.x) {
-        //         // bla
-        //     }
-        
+                this.speedModifier += 0.1;
+        }        
     }
 
     draw(ctx) {
