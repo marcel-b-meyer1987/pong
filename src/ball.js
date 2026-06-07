@@ -9,6 +9,7 @@ export default class Ball {
         this.width = 24;    // only needed due to the function signature of collision detection
         this.height = 24;   // only needed due to the function signature of collision detection
         this.color = "rgba(239, 26, 93, 0.91)";
+        this.flickerColor = "rgba(239, 26, 93, 0.51)";
         this.baseX = this.game.width * 0.5;
         this.baseY = this.game.height * 0.3;
         this.baseSpeedX = 0.15;
@@ -17,7 +18,16 @@ export default class Ball {
         this.speed = {
             x: 0,
             y: 0
-        }
+        };
+
+        // for iFrames
+        this.immunity = false;
+        this.immunityTimer = 0;
+        this.immunityDuration = 1000;
+        this.flickerTimer = 0;
+        this.flickerInterval = 10;
+        this.flickerFrame = 0;
+
         this.resetPos();
         this.resetSpeed();
     }
@@ -38,6 +48,15 @@ export default class Ball {
         this.y += this.speed.y * this.speedModifier * dt;
 
         const paddle = this.game.paddle;
+
+        if (this.immunity) {
+            this.immunityTimer += dt;
+            if(this.immunityTimer >= this.immunityDuration) {
+                this.immunity = false;
+                console.log("immunity off");
+                this.immunityTimer = 0;
+            }
+        }
 
         // check for collision with left wall
         if (this.x - this.speed.x * this.speedModifier - this.size <= 0) {
@@ -62,7 +81,11 @@ export default class Ball {
         if (this.y + this.size >= this.game.height) {
                 this.y = this.game.height - this.size;
                 this.speed.y *= -1;
-                this.game.reduceUps();
+                if(!this.immunity) {
+                    this.game.reduceUps();
+                    this.immunity = true;
+                    console.log("immunity on");
+                }
                 console.log("Collision with ground!");
                 console.log(this, this.objects, `${this.game.ups} ups`);
         }
@@ -82,7 +105,13 @@ export default class Ball {
         ctx.save();
         ctx.beginPath();
         ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
-        ctx.fillStyle = this.color;
+
+        if (this.immunity) {
+            ctx.fillStyle = this.flickerColor;
+        } else {
+            ctx.fillStyle = this.color;
+        }
+
         ctx.fill();
         ctx.restore();
     }
