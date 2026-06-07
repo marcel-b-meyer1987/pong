@@ -79,12 +79,12 @@ export default class Ball {
 
         // check for collision with bottom
         if (this.y + this.size >= this.game.height) {
-                this.y = this.game.height - this.size;
-                this.speed.y *= -1;
+                this.y = this.game.height - this.size - 1;
+                this.speed.y = Math.abs(this.speed.y) * (-1);
                 if(!this.immunity) {
                     this.game.reduceUps();
                     this.immunity = true;
-                    console.log("immunity on");
+                    this.game.lostUps++;
                 }
                 console.log("Collision with ground!");
                 console.log(this, this.objects, `${this.game.ups} ups`);
@@ -96,7 +96,7 @@ export default class Ball {
                 console.log(this, this.objects, `${this.game.ups} ups`);
                 this.y = paddle.y - this.size - 1;
                 this.speed.y *= -1;
-                this.speedModifier += 0.1;
+                this.speedModifier += (0.1 / this.game.level);
         }
     }
 

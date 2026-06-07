@@ -24,7 +24,7 @@ export class Brick {
 
             // let the ball bounce back
             this.game.ball.speed.y *= -1;
-            this.game.ball.speed.x *= -1;
+            // this.game.ball.speed.x *= -1;
         }
 
         // if the brick is marked for removal, 

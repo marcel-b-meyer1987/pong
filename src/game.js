@@ -14,10 +14,11 @@ export default class Game {
         this.width = width;
         this.height = height;
         this.ups = 3;
+        this.lostUps = 0;
         this.score = 0;
         this.level = 1;
         this.lastTime = 0;
-        console.log(this.lastTime);
+        this.animationID = null;
         this.state = GAME_STATES.MENU;
         this.inputHandler = new InputHandler(this);
         this.hud = new Hud(this);
@@ -32,29 +33,21 @@ export default class Game {
     }
 
     init() {
-        console.log("init()");
+        // console.log("init()");
         this.lastTime = performance.now();
         this.state = GAME_STATES.RUNNING;
-        console.log(this.state);
+        // console.log(this.state);
         this.hud.init();
-        this.animate(this.lastTime);
-    }
-
-    start() {
-        this.lastTime = performance.now();
-        this.state = GAME_STATES.RUNNING;
-        console.log(this.state);
-        this.hud.init();
+        // this.objects.push(...this.createBricks(this.level));
+        this.animationID = this.animate(this.lastTime);
     }
 
     animate(timestamp = 0) {
         const dt = timestamp - this.lastTime;
         this.lastTime = timestamp;
     
-        if (this.state == GAME_STATES.RUNNING) {
-            this.update(dt);
-            this.draw();
-        }
+        if (this.state == GAME_STATES.RUNNING) this.update(dt);
+        if (this.state == GAME_STATES.RUNNING) this.draw();
     
         requestAnimationFrame(t => this.animate(t));
     }
@@ -62,17 +55,17 @@ export default class Game {
     update(dt) {
 
         if (this.ups < 1) this.gameOver();
-        
+
         // if game state is not RUNNING, do not update
         if (!this.state == GAME_STATES.RUNNING) return; 
 
         // if no more bricks among the game objects: level up!
-        if (!this.objects.some((obj) => obj instanceof Brick)) {
+        if (this.state == GAME_STATES.RUNNING && (!this.objects.some((obj) => obj instanceof Brick))) {
             this.levelUp();
         } else {
         
-        // otherwise, update all game objects
-                this.objects.forEach(obj => {
+        // otherwise, update all game objects + hud
+            this.objects.forEach(obj => {
                 obj.update(dt);
             });
             this.hud.update();
@@ -94,12 +87,11 @@ export default class Game {
         if (this.state === GAME_STATES.RUNNING) {
             this.showPauseScreen();
             this.state = GAME_STATES.PAUSE;
-            console.log(this.state);
+            // console.log(this.state);
          } else if (this.state === GAME_STATES.PAUSE) {
             this.state = GAME_STATES.RUNNING;
-            console.log(this.state);
+            // console.log(this.state);
          } 
-        // console.log(this.state);
     }
 
     showStartMenu() {
@@ -108,6 +100,7 @@ export default class Game {
 
         // draw overlay if game is paused
         this.ctx.fillStyle = "rgba(0, 0, 0, 0.5)";
+        this.ctx.clearRect(0, 0, this.width, this.height);
         this.ctx.fillRect(0, 0, this.width, this.height);
 
         // display Pause message
@@ -170,14 +163,19 @@ export default class Game {
 
     reduceUps() {
         this.ups--;
+        this.lostUps++;
         this.hud.updateUpsDisplay();
+    }
+
+    applyBonus() {
+        this.score += this.level * 100;
     }
 
     gameOver() {
         
+        cancelAnimationFrame(this.animationID);
         this.state = GAME_STATES.GAME_OVER;
-        this.showGameOverScreen();
-        console.log(this.state);
+        // console.log(this.state);
         
         // reset ball params
         this.ball.resetPos();
@@ -187,7 +185,9 @@ export default class Game {
         this.score = 0;
         this.level = 1;
         this.ups = 3;
+        this.lostUps = 0;
         this.hud.update();
+        this.showGameOverScreen();
 
         // filter all remaining bricks out of this.objects array
         this.objects = this.objects.filter(obj => obj instanceof Paddle || obj instanceof Ball);
@@ -206,6 +206,7 @@ export default class Game {
 
         // draw overlay if game is paused
         this.ctx.fillStyle = "rgba(0, 0, 0, 0.5)";
+        this.ctx.clearRect(0, 0, this.width, this.height);
         this.ctx.fillRect(0, 0, this.width, this.height);
 
         // display Game Over message
@@ -222,14 +223,15 @@ export default class Game {
     }
 
     levelUp() {
-        console.log("Level up!");
-        console.log(this.ball.speed, `${this.ups} ups`);
+        // console.log("Level up!");
+        // console.log(this.ball.speed, `${this.ups} ups`);
 
+        cancelAnimationFrame(this.animationID);
         this.showlevelUpScreen()
         // maybe show a short animation to give visual indication over level-up to the player
 
         this.state = GAME_STATES.LEVEL_UP;
-        console.log(this.state);
+        // console.log(this.state);
 
         // reset ball params
         this.ball.resetPos();
@@ -239,9 +241,10 @@ export default class Game {
         this.paddle.resetPos();
         this.paddle.resetSpeed();
 
+        if (this.lostUps === 0) this.applyBonus();
+        if (this.ups < 10) this.ups++;
         this.level++;
         this.hud.update();
-        console.log(this.ball.speed);
 
         // filter all remaining bricks out of this.objects array //ISSUE: IS THIS REALLY NEEDED?
         this.objects = this.objects.filter(obj => obj instanceof Paddle || obj instanceof Ball);
@@ -257,6 +260,7 @@ export default class Game {
 
         // draw overlay
         this.ctx.fillStyle = "rgba(0, 0, 0, 0.5)";
+        this.ctx.clearRect(0, 0, this.width, this.height);
         this.ctx.fillRect(0, 0, this.width, this.height);
 
         // display Level Up message
