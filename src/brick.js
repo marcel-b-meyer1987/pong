@@ -1,5 +1,5 @@
 import { BRICK_DATA } from "./constants.js";
-import { collisionY, collisionX } from "./utils.js";
+import { collisionCircleVsRect } from "./utils.js";
 
 export class Brick {
     constructor(game, x, y) {
@@ -19,20 +19,14 @@ export class Brick {
     }
 
     update(dt) {
-        if (collisionY(this.game.ball, this)) {
+        if (collisionCircleVsRect(this.game.ball, this)) {
             this.markedForRemoval = true;
 
             // let the ball bounce back
             this.game.ball.speed.y *= -1;
-        }
-
-        if (collisionX(this.game.ball, this)) {
-            this.markedForRemoval = true;
-
-            // let the ball bounce back
             this.game.ball.speed.x *= -1;
         }
-        
+
         // if the brick is marked for removal, 
         // splice it from the objects array
         if (this.markedForRemoval) {

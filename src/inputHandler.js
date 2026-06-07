@@ -18,9 +18,17 @@ export default class InputHandler {
 
     registerKey(key) {
         
-        if (key === "Escape") this.game.togglePause();       
+        if (key === "Escape") this.game.togglePause();
 
-        // only register ArrowLeft or ArrowRight
+        // start game on pressing spacebar after level up, gameover or from start menu
+        if (key === " " && 
+            (this.game.state === GAME_STATES.MENU ||
+            this.game.state === GAME_STATES.LEVEL_UP ||
+            this.game.state === GAME_STATES.GAME_OVER)) {
+                this.game.init();
+            }
+
+        // only register ArrowLeft or ArrowRight for paddle control
         if(
             key === "ArrowLeft" ||
             key === "ArrowRight"

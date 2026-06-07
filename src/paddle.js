@@ -6,12 +6,25 @@ export class Paddle {
         this.height = 20;
         this.bottomMargin = 10;
 
+        this.x = this.baseX;
+        this.y = this.baseY;
+        
+        this.speedModifier = 1;
+        this.speed = {
+            x: 1
+        };
+        this.resetPos();
+        this.resetSpeed();
+    }
+
+    resetPos() {
         this.x = this.game.width * 0.5 - this.width * 0.5;
         this.y = this.game.height - this.height - this.bottomMargin;
-        this.speed = {
-            x: 1,
-        }
+    }
 
+    resetSpeed() {
+        this.speed.x = 1;
+        this.speedModifier = 1;
     }
 
     update(dt = 1) {
@@ -19,6 +32,8 @@ export class Paddle {
                 if (this.x >= 0) this.x -= this.speed.x * dt;
             } else if ((this.game.inputHandler.keys["ArrowRight"].pressed)) {
                 if (this.x + this.width <= this.game.width) this.x += this.speed.x * dt;
+            } else {
+                return;
             }
         }
         // this.draw(this.game.ctx);

@@ -1,4 +1,5 @@
 import { GAME_HEIGHT } from "./constants.js";
+import { collisionCircleVsRect } from "./utils.js";
 
 
 export default class Ball {
@@ -20,54 +21,7 @@ export default class Ball {
         this.resetPos();
         this.resetSpeed();
     }
-
-    update(dt) {
-        this.x += this.speed.x * this.speedModifier * dt;
-        this.y += this.speed.y * this.speedModifier * dt;
-
-        const paddle = this.game.paddle;
-
-        // check for collision with left & right wall
-        if (this.x - this.speed.x * this.speedModifier - this.size <= 0) {
-            // this.speed.x *= -1;
-            this.speed.x = this.baseSpeedX;
-        }
-
-        if (this.x + this.speed.x * this.speedModifier + this.size >= this.game.width) {
-            this.x = this.game.width - this.size;
-            // this.speed.x *= -1;
-            this.speed.x = -this.baseSpeedX;
-        }
-
-        // check for collision with bottom
-        if (this.y + this.size >= this.game.height) {
-                this.y = this.game.height - this.size;
-                this.speed.y = Math.abs(this.speed.y) * (-1);
-                this.game.reduceUps();
-                console.log("Collision with ground!");
-                console.log(this, this.objects, `${this.game.ups} ups`);
-        }
-
-        // check for collision with ceiling
-        if (this.y - this.size <= 0) {
-            // this.y = 0;
-            this.speedModifier += 0.1;
-            this.speed.y *= -1;
-        }
-
-        // check for collision with paddle
-        if (this.y + this.size >= paddle.y &&
-            this.y + this.size <= paddle.y + paddle.height &&
-            this.x - this.size <= paddle.x + paddle.width &&
-            this.x + this.size >= paddle.x) {
-                console.log("Collision with paddle!");
-                console.log(this, this.objects, `${this.game.ups} ups`);
-                // this.y = paddle.y - this.size;
-                this.speed.y *= -1;
-                this.speedModifier += 0.1;
-        }        
-    }
-
+    
     resetPos() {
         this.x = this.baseX; 
         this.y = this.baseY; 
@@ -78,6 +32,51 @@ export default class Ball {
         this.speed.y = this.baseSpeedY;
         this.speedModifier = 1;
     }
+
+    update(dt) {
+        this.x += this.speed.x * this.speedModifier * dt;
+        this.y += this.speed.y * this.speedModifier * dt;
+
+        const paddle = this.game.paddle;
+
+        // check for collision with left wall
+        if (this.x - this.speed.x * this.speedModifier - this.size <= 0) {
+            this.x = this.size;
+            this.speed.x = this.baseSpeedX;
+        }
+
+        // check for collision with right wall
+        if (this.x + this.speed.x * this.speedModifier + this.size >= this.game.width) {
+            this.x = this.game.width - this.size;
+            this.speed.x = -this.baseSpeedX;
+        }
+        
+        // check for collision with ceiling
+        if (this.y - this.size <= 0) {
+            this.y = 0 + this.size + 1;
+            this.speedModifier += 0.1;
+            this.speed.y *= -1;
+        }
+
+        // check for collision with bottom
+        if (this.y + this.size >= this.game.height) {
+                this.y = this.game.height - this.size;
+                this.speed.y *= -1;
+                this.game.reduceUps();
+                console.log("Collision with ground!");
+                console.log(this, this.objects, `${this.game.ups} ups`);
+        }
+
+        // check for collision with paddle
+        if (collisionCircleVsRect(this, paddle)) {
+                console.log("Collision with paddle!");
+                console.log(this, this.objects, `${this.game.ups} ups`);
+                this.y = paddle.y - this.size - 1;
+                this.speed.y *= -1;
+                this.speedModifier += 0.1;
+        }
+    }
+
 
     draw(ctx) {
         ctx.save();

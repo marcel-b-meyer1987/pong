@@ -1,3 +1,5 @@
+// DIETER
+
 import { BRICK_DATA, GAME_STATES, GAME_WIDTH } from "./constants.js";
 import { Paddle } from "./paddle.js";
 import Ball from "./ball.js";
@@ -14,6 +16,8 @@ export default class Game {
         this.ups = 3;
         this.score = 0;
         this.level = 1;
+        this.lastTime = 0;
+        console.log(this.lastTime);
         this.state = GAME_STATES.MENU;
         this.inputHandler = new InputHandler(this);
         this.hud = new Hud(this);
@@ -23,13 +27,36 @@ export default class Game {
             this.paddle,
             this.ball,
             ...this.createBricks(this.level)
-        ]
-        console.log(this, this.objects, `${this.ups} ups`);
+        ];
+        console.log(this);
+    }
+
+    init() {
+        console.log("init()");
+        this.lastTime = performance.now();
+        this.state = GAME_STATES.RUNNING;
+        console.log(this.state);
+        this.hud.init();
+        this.animate(this.lastTime);
     }
 
     start() {
+        this.lastTime = performance.now();
         this.state = GAME_STATES.RUNNING;
+        console.log(this.state);
         this.hud.init();
+    }
+
+    animate(timestamp = 0) {
+        const dt = timestamp - this.lastTime;
+        this.lastTime = timestamp;
+    
+        if (this.state == GAME_STATES.RUNNING) {
+            this.update(dt);
+            this.draw();
+        }
+    
+        requestAnimationFrame(t => this.animate(t));
     }
 
     update(dt) {
@@ -65,8 +92,10 @@ export default class Game {
         if (this.state === GAME_STATES.RUNNING) {
             this.showPauseScreen();
             this.state = GAME_STATES.PAUSE;
+            console.log(this.state);
          } else if (this.state === GAME_STATES.PAUSE) {
             this.state = GAME_STATES.RUNNING;
+            console.log(this.state);
          } 
         // console.log(this.state);
     }
@@ -148,21 +177,22 @@ export default class Game {
         
         this.showGameOverScreen();
         this.state = GAME_STATES.GAME_OVER;
+        console.log(this.state);
         
-        // reset game params
+        // reset ball params
         this.ball.resetPos();
         this.ball.resetSpeed();
-        this.ball.speedModifier = 1;
+        
+        // reset game params
         this.score = 0;
         this.level = 1;
         this.ups = 3;
         this.hud.update();
 
-        // Go back to Level 1
         // filter all remaining bricks out of this.objects array
         this.objects = this.objects.filter(obj => obj instanceof Paddle || obj instanceof Ball);
 
-        // create bricks for the new level and 
+        // // Go back to Level 1 = create bricks for the level and 
         // push them flat into the this.objects array
         this.objects.push(...this.createBricks(this.level));
         
@@ -195,23 +225,30 @@ export default class Game {
         console.log("Level up!");
         console.log(this.ball.speed, `${this.ups} ups`);
 
+        this.showlevelUpScreen()
+        // maybe show a short animation to give visual indication over level-up to the player
+
         this.state = GAME_STATES.LEVEL_UP;
-        this.level++;
+        console.log(this.state);
+
+        // reset ball params
         this.ball.resetPos();
         this.ball.resetSpeed();
-        this.ball.speedModifier = 1;
-        this.hud.init();
+
+        // reset paddle params
+        this.paddle.resetPos();
+        this.paddle.resetSpeed();
+
+        this.level++;
+        this.hud.update();
         console.log(this.ball.speed);
 
-        // filter all remaining bricks out of this.objects array //ISSUE: IS THIS EVER REALLY NEEDED?
-        // this.objects = this.objects.filter(obj => obj instanceof Paddle || obj instanceof Ball);
+        // filter all remaining bricks out of this.objects array //ISSUE: IS THIS REALLY NEEDED?
+        this.objects = this.objects.filter(obj => obj instanceof Paddle || obj instanceof Ball);
 
         // create bricks for the new level and 
         // push them flat into the this.objects array
         this.objects.push(...this.createBricks(this.level));
-
-        // maybe show a short animation to give visual indication over level-up to the player
-        this.showlevelUpScreen()
     }
 
     showlevelUpScreen() {
