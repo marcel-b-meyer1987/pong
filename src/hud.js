@@ -13,11 +13,19 @@ export class Hud {
         this.game = game;
         this.displayElement = document.getElementById("hud");
         this.scoreDisplay = document.getElementById("score");
+        this.levelDisplay = document.getElementById("level");
         this.upsDisplay = document.getElementById("ups-display");
     }
 
     init() {
         this.updateScoreDisplay();
+        this.updateLevelDisplay();
+        this.updateUpsDisplay();
+    }
+
+    update() {
+        this.updateScoreDisplay();
+        this.updateLevelDisplay();
         this.updateUpsDisplay();
     }
 
@@ -36,7 +44,7 @@ export class Hud {
 
     updateLevelDisplay() {
         let level = this.game.level;
-        
+        this.levelDisplay.innerText = this.game.level;
     }
 }
 

@@ -13,6 +13,7 @@ export class Brick {
         this.x = x;
         this.y = y;
 
+        this.score = 10;
         this.markedForRemoval = false;
 
     }
@@ -37,6 +38,7 @@ export class Brick {
         if (this.markedForRemoval) {
             let index = this.game.objects.indexOf(this);
             if (index > -1) {
+                this.game.score += this.score;
                 this.game.objects.splice(index, 1);
             }
         }

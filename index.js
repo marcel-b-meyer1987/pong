@@ -15,11 +15,11 @@ const game = new Game(ctx, GAME_WIDTH, GAME_HEIGHT);
 
 // animation gameloop
 
-let lastTime = performance.now();
+let lastTime = undefined;
 
 function animate(timestamp = 0) {
     
-    let dt = timestamp - lastTime;
+    let dt = timestamp - (lastTime || performance.now());
     lastTime = timestamp;
 
     if (game.state == GAME_STATES.RUNNING) {
@@ -32,13 +32,15 @@ function animate(timestamp = 0) {
 }
 
 function init() {
-    game.start();
+    lastTime = performance.now();
+    game.state = GAME_STATES.RUNNING;
+    game.hud.init();
     animate(lastTime);
 }
 
 // SET UP START MENU
 window.addEventListener("keydown", e => {
-    if (e.key === " " && game.state === GAME_STATES.MENU) init();
+    if (e.key === " " && (game.state === GAME_STATES.MENU || game.state === GAME_STATES.LEVEL_UP || game.state === GAME_STATES.GAME_OVER)) init();
 });
 
 game.showStartMenu();
