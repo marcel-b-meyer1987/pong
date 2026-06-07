@@ -61,6 +61,8 @@ export default class Game {
 
     update(dt) {
 
+        if (this.ups < 1) this.gameOver();
+        
         // if game state is not RUNNING, do not update
         if (!this.state == GAME_STATES.RUNNING) return; 
 
@@ -169,14 +171,12 @@ export default class Game {
     reduceUps() {
         this.ups--;
         this.hud.updateUpsDisplay();
-
-        if (this.ups < 1) this.gameOver();
     }
 
     gameOver() {
         
-        this.showGameOverScreen();
         this.state = GAME_STATES.GAME_OVER;
+        this.showGameOverScreen();
         console.log(this.state);
         
         // reset ball params
@@ -208,13 +208,13 @@ export default class Game {
         this.ctx.fillStyle = "rgba(0, 0, 0, 0.5)";
         this.ctx.fillRect(0, 0, this.width, this.height);
 
-        // display Pause message
+        // display Game Over message
         this.ctx.font = "72px sans-serif";
         this.ctx.fillStyle = "hsla(160, 100%, 60%, 0.8)";
         this.ctx.strokeStyle = "hsla(160, 100%, 90%, 0.8)";
         this.ctx.textAlign = "center";
         this.ctx.fillText("GAME OVER", this.width * 0.5, this.height * 0.5);
-        this.ctx.fillText("Press Spacebar to try again", this.width * 0.5, this.height * 0.5);
+        this.ctx.fillText("Press Spacebar to try again", this.width * 0.5, this.height * 0.5 + 80, GAME_WIDTH * 0.85);
 
         this.ctx.restore();
 
@@ -265,7 +265,7 @@ export default class Game {
         this.ctx.strokeStyle = "hsla(160, 100%, 90%, 0.8)";
         this.ctx.textAlign = "center";
         this.ctx.fillText("LEVEL UP!", this.width * 0.5, this.height * 0.5, GAME_WIDTH * 0.85);
-        this.ctx.fillText("PRESS SPACE TO CONTINUE", this.width * 0.5, this.height * 0.5, GAME_WIDTH * 0.85);
+        this.ctx.fillText("Press Space to continue", this.width * 0.5, this.height * 0.5 + 80, GAME_WIDTH * 0.85);
 
         this.ctx.restore();
 
